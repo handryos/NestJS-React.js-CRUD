@@ -1,7 +1,7 @@
 "use client";
 import { useRouter, usePathname } from "next/navigation";
 import { Provider as ReduxProvider } from "react-redux";
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 import DynamicRouting from "../components/DynamicRouting";
 import { store, useSelector } from "../redux/store";
@@ -9,7 +9,7 @@ import ThemeRegistry from "../theme/ThemeRegistry";
 import Menu from "../components/Menu/Menu";
 import MenuTop from "../components/Menu/MenuTop";
 import { useMediaQuery, useTheme } from "@mui/material";
-import DrawerTema from "../components/ArpaDrawerTema/DrawerTema";
+import ThemeDrawer from "../components/ThemeDrawer/ThemeDrawer";
 
 export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
   let routerx = useRouter();
@@ -17,22 +17,23 @@ export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery("(max-width:1024px)");
   const isTablet = useMediaQuery("(min-width:500px)");
 
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
-    if (!token && pathname != "/routes/register") {
-      routerx.push("/routes/login");
-    }
-
-    if (token) {
-      const expirationTime = 60 * 60 * 1000;
-      const timer = setTimeout(() => {
-        localStorage.removeItem("token");
+    if (typeof window !== "undefined") {
+      const localToken = localStorage.getItem("token");
+      if (!localToken && pathname !== "/routes/register") {
         routerx.push("/routes/login");
-      }, expirationTime);
-      return () => clearTimeout(timer);
+      }
+      if (localToken) {
+        const expirationTime = 60 * 60 * 1000;
+        const timer = setTimeout(() => {
+          localStorage.removeItem("token");
+          routerx.push("/routes/login");
+        }, expirationTime);
+
+        return () => clearTimeout(timer);
+      }
     }
-  }, [routerx, pathname, token]);
+  }, [routerx, pathname]);
 
   return (
     <ReduxProvider store={store}>
@@ -45,7 +46,7 @@ export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
               ) : (
                 <>
                   <Menu />
-                  <DrawerTema />
+                  <ThemeDrawer />
                 </>
               )
             ) : null}

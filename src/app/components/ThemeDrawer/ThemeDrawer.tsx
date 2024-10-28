@@ -12,7 +12,7 @@ import { reset } from "@/app/redux/slices/Theme";
 
 type Anchor = "right";
 
-export default function DrawerTema({ menuSuperior = true }) {
+export default function ThemeDrawer({ menuSuperior = true }) {
   const theme = useTheme();
 
   const [state, setState] = useState({

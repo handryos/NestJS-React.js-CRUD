@@ -25,7 +25,9 @@ import {
 } from "@/app/services/Authentication/AuthService";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().required("Esse campo é obrigatório"),
+  email: Yup.string()
+    .required("Esse campo é obrigatório")
+    .email("Please enter a valid email address"),
   password: Yup.string().required("Esse campo é obrigatório"),
 });
 

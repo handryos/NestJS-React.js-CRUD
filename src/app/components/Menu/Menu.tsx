@@ -63,7 +63,7 @@ export default function Menux() {
               aria-haspopup="true"
               onClick={handleMenu}
               sx={{
-                color: "black",
+                color: "white",
                 transition: "transform 0.2s ease-in-out",
                 ":hover": {
                   transform: "scale(1.1)",

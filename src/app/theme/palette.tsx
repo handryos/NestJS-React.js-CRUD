@@ -176,13 +176,6 @@ const palette = {
     background: { paper: "#fff", default: "#fff", neutral: GREY[200] },
     action: { active: GREY[600], ...COMMON.action },
   },
-  dark: {
-    ...COMMON,
-    mode: "dark",
-    text: { primary: "#fff", secondary: GREY[300], disabled: GREY[600] },
-    background: { paper: GREY[800], default: GREY[900], neutral: GREY[500_16] },
-    action: { active: GREY[0], ...COMMON.action },
-  },
 } as const;
 
 export default palette;

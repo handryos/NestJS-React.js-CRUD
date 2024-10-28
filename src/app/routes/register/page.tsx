@@ -36,8 +36,9 @@ import {
 } from "@/app/services/Authentication/AuthService";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().required("This field is required"),
-
+  email: Yup.string()
+    .required("This field is required")
+    .email("Please enter a valid email address"),
   password: Yup.string()
     .required("This field is required")
     .min(6, "Password must be at least 6 characters"),

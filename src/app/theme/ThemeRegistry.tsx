@@ -9,7 +9,7 @@ import { presetsDeCores } from "./type";
 
 export default function ThemeRegistry(props: any) {
   const { children } = props;
-  const { indexColor, darkMode } = useSelector((state) => state.theme);
+  const { indexColor } = useSelector((state) => state.theme);
 
   const theme = createTheme({
     breakpoints: {
@@ -21,7 +21,7 @@ export default function ThemeRegistry(props: any) {
         xl: 1920,
       },
     },
-    palette: darkMode ? palette.dark : palette.light,
+    palette: palette.light,
     shape: { borderRadius: 8 },
   });
 

@@ -20,9 +20,6 @@ export type FormCardProps = {
   functionConfirm?: (...args: any[]) => any;
   topContent?: string;
 } & BoxProps;
-const goBack = (router: any) => {
-  router.back();
-};
 
 const FormCard = ({
   children,
