@@ -1,8 +1,18 @@
-import bcrypt from 'bcrypt';
 import { PrismaAuthRepository } from 'src/repositories/prisma/prisma.auth.repository';
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  InternalServerErrorException,
+  Post,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as CryptoJS from 'crypto-js';
+import * as bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 function cleanString(input: string): string {
   let cleanedString = input.replace(/\\/g, '');
@@ -16,7 +26,6 @@ class AuthControler {
   constructor(private readonly authRepository: PrismaAuthRepository) {}
 
   @Post('register')
-  @HttpCode(HttpStatus.OK)
   async register(@Body() user: User) {
     try {
       let newUser: Omit<User, 'id'> = {
@@ -24,13 +33,12 @@ class AuthControler {
         password: user.password,
       };
 
-      // const bytes = CryptoJS.AES.decrypt(
-      //   user.password,
-      //   'DA39A3EE5E6B4B0D3255BFEF95601890AFD80709',
-      // );
-
-      // const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
-      // newUser.password = decryptedPassword;
+      const bytes = CryptoJS.AES.decrypt(
+        user.password,
+        process.env.SECRET_CRYPTO_KEY || 'secret',
+      );
+      const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
+      newUser.password = decryptedPassword;
 
       await this.authRepository.create(newUser);
 
@@ -41,14 +49,12 @@ class AuthControler {
         },
       };
     } catch (error) {
-      return {
-        status: 'Internal Server Error',
-        message: 'Error creating the user, verify!. ' + error,
-      };
+      throw new InternalServerErrorException(
+        'Error creating the user, verify!. ' + error,
+      );
     }
   }
   @Post('login')
-  @HttpCode(HttpStatus.OK)
   async login(@Body() user: User) {
     try {
       const sendedUser: Omit<User, 'id'> = {
@@ -56,12 +62,13 @@ class AuthControler {
         password: user.password,
       };
 
-      // const bytes = CryptoJS.AES.decrypt(
-      //   sendedUser.password,
-      //   'DA39A3EE5E6B4B0D3255BFEF95601890AFD80709',
-      // );
-      // const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
-      // sendedUser.password = cleanString(decryptedPassword);
+      const bytes = CryptoJS.AES.decrypt(
+        sendedUser.password,
+        process.env.SECRET_CRYPTO_KEY || 'secret',
+      );
+
+      const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
+      sendedUser.password = cleanString(decryptedPassword);
 
       let loggedUser = await this.authRepository.login(sendedUser);
       return {
@@ -69,10 +76,9 @@ class AuthControler {
         token: loggedUser.access_token,
       };
     } catch (err: any) {
-      return {
-        status: 'Internal Server Error',
-        message: 'Invalid email or password. Verify!.',
-      };
+      throw new InternalServerErrorException(
+        'Invalid email or password. Verify!.',
+      );
     }
   }
 }

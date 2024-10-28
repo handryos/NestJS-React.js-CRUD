@@ -88,6 +88,25 @@ export class PrismaMonitoringPointsRepository
     }
   }
 
+  async getByMachine(machineId: number): Promise<boolean> {
+    try {
+      let existingMonitoringPoint = await this.prisma.monitoringPoints.findMany(
+        {
+          where: {
+            machineId: machineId,
+          },
+        },
+      );
+      if (existingMonitoringPoint.length != 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async update(monitoringPoint: MonitoringPoints): Promise<void> {
     try {
       const existingMonitoringPoint =
@@ -103,7 +122,6 @@ export class PrismaMonitoringPointsRepository
       let machine = this.machineRepository.getById(
         Number(monitoringPoint.machineId),
       );
-
       let isValidMachineType = await isValidMonitoringPoint(sensor, machine);
 
       if (!isValidMachineType) {
@@ -120,7 +138,15 @@ export class PrismaMonitoringPointsRepository
           name:
             existingMonitoringPoint.name == undefined
               ? existingMonitoringPoint.name
-              : existingMonitoringPoint.name,
+              : monitoringPoint.name,
+          sensorId:
+            existingMonitoringPoint.sensorId == undefined
+              ? existingMonitoringPoint.sensorId
+              : monitoringPoint.sensorId,
+          machineId:
+            existingMonitoringPoint.machineId == undefined
+              ? existingMonitoringPoint.machineId
+              : monitoringPoint.machineId,
         },
       });
     } catch (err: any) {

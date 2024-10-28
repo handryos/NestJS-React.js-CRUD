@@ -11,25 +11,36 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { Machine, MonitoringPoints } from '@prisma/client';
+import { MonitoringPoints } from '@prisma/client';
 import { AuthenticatedRequest } from 'src/middlewares/authenticated.request';
+import { PrismaMachineRepository } from 'src/repositories/prisma/prisma.machine.repository';
 import { PrismaMonitoringPointsRepository } from 'src/repositories/prisma/prisma.monitoring.points';
+import Sensor from 'src/VOs/sensors.vo';
 
 @Controller('monitoringPoints')
 class MonitoringPointsController {
   constructor(
     private readonly monitoringPointRepository: PrismaMonitoringPointsRepository,
+    private readonly machinesRepository: PrismaMachineRepository,
   ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthenticatedRequest)
   async create(@Body() monitoringPoint: Omit<MonitoringPoints, 'id'>) {
+    const existingMonitoringPoint =
+      await this.monitoringPointRepository.getByMonitoringPoints(
+        monitoringPoint,
+      );
+    if (existingMonitoringPoint) {
+      throw new InternalServerErrorException('Monitoring point already exists');
+    }
+
     try {
       await this.monitoringPointRepository.create(monitoringPoint);
       return {
         status: 'Ok!',
-        machine: {
+        monitoringPoint: {
           name: monitoringPoint.name,
         },
       };
@@ -46,9 +57,27 @@ class MonitoringPointsController {
   async findAll() {
     try {
       const monitoringPoints = await this.monitoringPointRepository.getAll();
+
+      const monitoringPointsWithDetails = await Promise.all(
+        monitoringPoints.map(async (monitoringPoint) => {
+          const machineOfMonitoringPoint =
+            await this.machinesRepository.getById(monitoringPoint.machineId);
+          const sensorOfMonitoringPoint = Sensor.getSensorById(
+            monitoringPoint.sensorId,
+          );
+
+          return {
+            id: monitoringPoint.id,
+            name: monitoringPoint.name,
+            machineName: machineOfMonitoringPoint.name,
+            machineType: machineOfMonitoringPoint.type,
+            sensorModel: sensorOfMonitoringPoint.modelName,
+          };
+        }),
+      );
       return {
         status: 'Ok!',
-        monitoringPoints: monitoringPoints,
+        monitoringPoints: monitoringPointsWithDetails,
       };
     } catch (err) {
       throw new InternalServerErrorException(err);
@@ -63,12 +92,23 @@ class MonitoringPointsController {
       const monitoringPoint = await this.monitoringPointRepository.getById(
         Number(id),
       );
+      const machineOfMonitoringPoint = await this.machinesRepository.getById(
+        monitoringPoint.machineId,
+      );
+      const sensorOfMonitoringPoint = Sensor.getSensorById(
+        monitoringPoint.sensorId,
+      );
       if (monitoringPoint == null) {
         throw new InternalServerErrorException('Monitoring point not found');
       } else {
         return {
           status: 'Ok!',
-          data: monitoringPoint,
+          monitoringPoint: {
+            id: monitoringPoint.id,
+            name: monitoringPoint.name,
+            machine: machineOfMonitoringPoint,
+            sensor: sensorOfMonitoringPoint,
+          },
         };
       }
     } catch (err) {
@@ -117,7 +157,6 @@ class MonitoringPointsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticatedRequest)
   async delete(@Param('id') id: number) {
-    console.log(id);
     try {
       const monitoringPoint = await this.monitoringPointRepository.getById(
         Number(id),

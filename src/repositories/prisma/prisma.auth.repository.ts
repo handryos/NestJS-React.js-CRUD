@@ -1,7 +1,11 @@
 import { PrismaService } from 'src/database/prisma.service';
 import { AuthRepostory } from '../AuthRepository/auth.repository';
 import { User } from '@prisma/client';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcrypt';
@@ -23,6 +27,14 @@ export class PrismaAuthRepository implements AuthRepostory {
 
   async create(user: Omit<User, 'id'>): Promise<void> {
     let hashedPassword = await this.hashPassword(user.password);
+    let existingUser = await this.prisma.user.findUnique({
+      where: { email: user.email },
+    });
+    if (existingUser) {
+      throw new InternalServerErrorException(
+        `User "${user.email}" already exists`,
+      );
+    }
     await this.prisma.user.create({
       data: { email: user.email, password: hashedPassword },
     });
@@ -37,8 +49,7 @@ export class PrismaAuthRepository implements AuthRepostory {
     if (!existingUser) {
       throw new UnauthorizedException('User not exists, verify!');
     }
-
-    const isPasswordValid = await bcrypt.compare(
+    const isPasswordValid = bcrypt.compareSync(
       user.password,
       existingUser.password,
     );

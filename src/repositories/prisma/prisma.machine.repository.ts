@@ -1,8 +1,7 @@
 import { PrismaService } from 'src/database/prisma.service';
 import { MachineRepository } from '../MachineRepository/machine.repository';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Machine } from '@prisma/client';
-import { machine } from 'os';
 
 @Injectable()
 export class PrismaMachineRepository implements MachineRepository {

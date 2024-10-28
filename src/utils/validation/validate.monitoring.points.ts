@@ -6,11 +6,9 @@ export default async function isValidMonitoringPoint(
   machinePromise: Promise<Machine>,
 ): Promise<boolean> {
   const machine = await machinePromise;
-  if (
-    sensor.modelName == 'TcAg' ||
-    (sensor.modelName == 'TcAs' && machine.type == 'PUMP')
-  ) {
-    return false;
+  if (sensor.modelName == 'TcAg' || sensor.modelName == 'TcAs') {
+    if (machine.type == 'PUMP') return false;
+    else return true;
   } else {
     return true;
   }
