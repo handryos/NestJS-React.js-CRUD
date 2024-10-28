@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "npx prisma generate --schema=src/prisma/schema.prisma && npx prisma migrate deploy --schema=src/prisma/schema.prisma && nest build",
+    "build": "npx prisma generate --schema=src/prisma/schema.prisma && npx prisma migrate dev --schema=src/prisma/schema.prisma && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "npx prisma migrate deploy --schema=src/prisma/schema.prisma && nest start",
     "dev": "npx prisma migrate deploy --schema=src/prisma/schema.prisma && nest start --watch",
