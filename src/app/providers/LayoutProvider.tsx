@@ -74,7 +74,9 @@ export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
                 }}
               >
                 <Suspense>
-                  <div style={{ overflow: "auto" }}>{children}</div>
+                  <div style={{ overflowY: "auto", overflowX: "hidden" }}>
+                    {children}
+                  </div>
                 </Suspense>
               </div>
             </div>

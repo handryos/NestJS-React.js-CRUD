@@ -69,8 +69,11 @@ export default function Machines() {
               entity="Machine"
               removeCheckBox
               deleteFunction={(params) => {
-                MachineService.delete(params.id);
-                handleRemove(params.id);
+                MachineService.delete(params.id).then((response) => {
+                  if (response.status == 200) {
+                    handleRemove(params.id);
+                  }
+                });
               }}
               newFunction={() => {
                 router.push("machines/new");
@@ -91,7 +94,7 @@ export default function Machines() {
                   field: "id",
                   headerName: "Id",
                   width: isXs
-                    ? 100
+                    ? 120
                     : isSm
                     ? 100
                     : isMd

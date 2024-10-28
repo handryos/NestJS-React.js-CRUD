@@ -43,7 +43,7 @@ export default function DataTable({
   editFunction: (data: any) => any;
   deleteFunction?: (data: any) => any;
   removeCheckBox?: boolean;
-  entity: string;
+  entity: "Machine" | "Monitoring Points";
 }) {
   const isXs = useMediaQuery((theme: Theme) => theme.breakpoints.down("xs"));
   const isSm = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
@@ -145,8 +145,8 @@ export default function DataTable({
       key={JSON.stringify(data)}
       sx={{
         mb: 2,
-        width: isXs ? "50%" : "100%",
-        maxWidth: isXs ? "35%" : "95%",
+        width: isXs ? (entity == "Machine" ? "100%" : "50%") : "100%",
+        maxWidth: isXs ? (entity == "Machine" ? "90%" : "35%") : "95%",
         ml: { xs: 10, sm: 0 },
       }}
     >
