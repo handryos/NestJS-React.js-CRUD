@@ -8,7 +8,7 @@ export default function AxiosAuth() {
   const token = localStorage.getItem("token");
 
   const axiosInstance = axios.create({
-    baseURL: "http://dynamox-fullstack-test-production.up.railway.appss",
+    baseURL: "https://dynamox-fullstack-test-production.up.railway.app/auth",
     headers: {
       Authorization: `Bearer ${token}`,
     },
