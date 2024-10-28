@@ -26,9 +26,9 @@ import {
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
-    .required("Esse campo é obrigatório")
+    .required("This field is required")
     .email("Please enter a valid email address"),
-  password: Yup.string().required("Esse campo é obrigatório"),
+  password: Yup.string().required("This field is required"),
 });
 
 export default function Login() {
@@ -104,22 +104,20 @@ export default function Login() {
             >
               <Grid item xs={12}>
                 <MainTextField
-                  required
                   fullWidth
                   id="email"
                   requerido
                   name="email"
                   autoComplete="new-password"
-                  label="Nome do usuário"
+                  label="E-mail"
                 />
               </Grid>
               <Grid item xs={12}>
                 <MainTextField
-                  required
                   requerido
                   fullWidth
                   name="password"
-                  label="Senha do usuário"
+                  label="Password"
                   type="password"
                   id="password"
                   autoComplete="new-password"
