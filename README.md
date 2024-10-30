@@ -1,99 +1,170 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Deploy Overview
 
-## Description
+This document outlines the deployment setup for the project, detailing the backend deployment on Railway and the frontend deployment on Netlify.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Backend Deployment:** Hosted on [Railway] - (dynamox-fullstack-test-production.up.railway.app)
+- **Frontend Deployment:** Hosted on [Netlify]
 
-## Project setup
+### Application Access
+You can access the application login page here: [Dynamox Test Login](https://dynamox-test.netlify.app/routes/login)
+
+# Back-End Overview
+
+ 1. **Machine Management**:
+    - Create, read, update, and delete machines.
+    - Machines can be of type `FAN` or `PUMP`, validated on creation and update.
+    - Checks for existing machines based on machine name to avoid duplicates.
+
+2. **Monitoring Points Management**:
+    - Create, read, update, and delete monitoring points.
+    - Each monitoring point is associated with a machine and sensor, with data validation to ensure compatibility.
+    - Returns detailed information about associated machines and sensors in response.
+
+3. **Authentication**:
+    - Every endpoint is protected by authentication middleware using JWT.
+    - Users must authenticate to interact with the API.
+
+4. **Validation**:
+    - Data validation is applied to ensure that only valid machines and monitoring points are created or updated.
+    - Monitoring points are only allowed for specific machine types based on sensor compatibility.
+
+5. **Database Integration**:
+    - Data is stored in a PostgreSQL database.
+    - Prisma ORM is used to manage schema migrations and communicate with the PostgreSQL database.
+
+## Endpoints
+
+### Authentication Endpoints
+
+- **Create user**:
+- `Post /auth/register`
+- Used to register a new user
+
+- **Login**:
+- `Post /auth/login`
+- Used to login a user  
+
+- **Create Machine**:  
+  `POST /machines`  
+  Creates a new machine. Only 'FAN' and 'PUMP' types are allowed. If a machine with the same name exists, it throws an error.
+
+- **Get All Machines**:  
+  `GET /machines`  
+  Retrieves a list of all machines.
+
+- **Get Machine by ID**:  
+  `GET /machines/:id`  
+  Retrieves details of a machine by its ID.
+
+- **Update Machine**:  
+  `PUT /machines`  
+  Updates an existing machine, checking for name conflicts and ensuring the type is either 'FAN' or 'PUMP'.
+
+- **Delete Machine**:  
+  `DELETE /machines/:id`  
+  Deletes a machine by its ID. Throws an error if the machine has any associated monitoring points.
+
+### Machine Endpoints
+
+- **Create Machine**:  
+  `POST /machines`  
+  Creates a new machine. Only 'FAN' and 'PUMP' types are allowed. If a machine with the same name exists, it throws an error.
+
+- **Get All Machines**:  
+  `GET /machines`  
+  Retrieves a list of all machines.
+
+- **Get Machine by ID**:  
+  `GET /machines/:id`  
+  Retrieves details of a machine by its ID.
+
+- **Update Machine**:  
+  `PUT /machines`  
+  Updates an existing machine, checking for name conflicts and ensuring the type is either 'FAN' or 'PUMP'.
+
+- **Delete Machine**:  
+  `DELETE /machines/:id`  
+  Deletes a machine by its ID. Throws an error if the machine has any associated monitoring points.
+
+### Monitoring Points Endpoints
+
+- **Create Monitoring Point**:  
+  `POST /monitoringPoints`  
+  Creates a new monitoring point, validating the compatibility between the sensor and the machine.
+
+- **Get All Monitoring Points**:  
+  `GET /monitoringPoints`  
+  Retrieves a list of all monitoring points, including machine and sensor details.
+
+- **Get Monitoring Point by ID**:  
+  `GET /monitoringPoints/:id`  
+  Retrieves details of a monitoring point by its ID.
+
+- **Update Monitoring Point**:  
+  `PUT /monitoringPoints`  
+  Updates an existing monitoring point, validating sensor and machine compatibility.
+
+- **Delete Monitoring Point**:  
+  `DELETE /monitoringPoints/:id`  
+  Deletes a monitoring point by its ID.
+
+## Technologies
+
+- **NestJS**: A progressive Node.js framework for building efficient and scalable server-side applications.
+- **Prisma ORM**: A next-generation ORM for Node.js and TypeScript that helps developers build faster and make fewer errors.
+- **JWT**: Used for securing endpoints and handling authentication.
+- **PostgreSQL**: Used how database
+
+## Error Handling
+
+The system uses `InternalServerErrorException` to handle various cases of errors, such as invalid machine types, machine name conflicts, and errors related to monitoring point creation or updates. Custom messages are included to help identify the root cause of failures.
+
+## Running the Project
+
+1. Clone the repository.
+2. Install dependencies using `npm install`.
+3. Set up the environment variables (e.g., database URL, authentication keys).
+4. Run the Prisma migrations using `npx prisma migrate dev`.
+5. Start the application using `npm run start`.
+
+## Prisma Migrations
+
+To generate Prisma migrations automatically upon application startup, the following command is executed:
 
 ```bash
-$ npm install
+npx prisma migrate dev
 ```
 
-## Compile and run the project
+# Front-End Overview
+
+This project implements key functionalities for a monitoring system, focusing on authentication, responsive design, form validation, and dynamic UI elements. Below is a detailed explanation of the features implemented on the frontend.
+
+## Features Implemented
+
+### 1. Authentication
+- **JWT for session control**: The login system uses JSON Web Tokens (JWT) to manage user sessions securely.
+- **Bcrypt for password hashing**: User passwords are encrypted using Bcrypt before being stored, ensuring a high level of security.
+- **CryptoJS for payload encryption**: The form payload, including sensitive information like the password, is encrypted before being sent. You can observe that the password appears as a hash in the request payload.
+
+### 2. Responsive Design
+- The application is fully responsive, supporting devices with a minimum width of 320px. If any responsiveness issues are encountered in Chrome's emulator, simply refresh the page (F5).
+
+### 3. Form Validation
+- Form validation has been implemented using **HookForm** in combination with **YUP**. This approach provides better control and error handling across forms.
+
+### 4. Dynamic Color System
+- A simple system for switching colors has been integrated, allowing basic customization of the user interface.
+
+### 5. Column Hiding in Main Grid
+- A column-hiding feature has been added to the main grid, specifically in the machines table. This functionality serves as a demonstration and does not affect the display of monitoring point data, which remains intact as per requirements.
+
+## How to Run
+
+To run the project, ensure you have the necessary dependencies installed. You can start the application by running the following commands:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
+npm run dev
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
