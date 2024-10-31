@@ -199,6 +199,7 @@ export default function DataTable({
           disableColumnResize
           sx={{
             overflowY: "hidden",
+            minHeight: "300px",
             boxShadow: 4,
             border: "none",
             " .MuiDataGrid-row--borderBottom .MuiDataGrid-filler": {

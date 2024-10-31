@@ -77,7 +77,11 @@ export default function MenuTop() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ bgcolor: "#274375" }} open={open}>
+      <AppBar
+        position="fixed"
+        sx={{ bgcolor: theme.palette.primary.main }}
+        open={open}
+      >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -127,7 +131,13 @@ export default function MenuTop() {
       >
         <DrawerHeader>
           <Box width={"100%"} display="flex" justifyContent="center" p={2}>
-            <img src="/logo.png" alt="Logo" height="50" width="80" />
+            <img
+              onClick={() => router.push("/routes/home")}
+              src="/logo1.png"
+              alt="Logo"
+              height="50"
+              width="120"
+            />
           </Box>
           <IconButton onClick={handleDrawerClose}>
             {
@@ -151,13 +161,16 @@ export default function MenuTop() {
                 <ListItem key={item.key} disablePadding>
                   <ListItemButton
                     onClick={() => {
-                      item.key == "sair"
+                      item.key == "Log-off"
                         ? handleLogOff()
                         : router.push(`${item.key}`);
                     }}
                     sx={{
                       transition: "transform 0.2s ease-in-out",
-                      bgcolor: pathName === item.key ? "#274375" : "inherit",
+                      bgcolor:
+                        pathName === item.key
+                          ? theme.palette.primary.light
+                          : "inherit",
                       "&:hover": {
                         ":hover": {
                           transform: "scale(1.05)",
@@ -165,7 +178,7 @@ export default function MenuTop() {
                         },
                         bgcolor:
                           pathName === item.key
-                            ? "#2c45b2"
+                            ? theme.palette.primary.darker
                             : "rgba(0, 0, 0, 0.04)",
                       },
                     }}
