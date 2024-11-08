@@ -11,13 +11,9 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  IconButton,
-  Menu,
-  MenuItem,
   useTheme,
   alpha,
 } from "@mui/material";
-import { useState } from "react";
 import Iconify from "../Iconify/Iconify";
 import { usePathname, useRouter } from "next/navigation";
 import menuItems from "./Routes";
@@ -25,20 +21,6 @@ import menuItems from "./Routes";
 export default function Menux() {
   const router = useRouter();
   const pathName = usePathname();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogOff = () => {
-    localStorage.removeItem("token");
-    router.replace("routes/login");
-  };
 
   const theme = useTheme();
 
@@ -55,43 +37,6 @@ export default function Menux() {
             component="div"
             sx={{ flexGrow: 1 }}
           ></Typography>
-          <div>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              sx={{
-                color: "white",
-                transition: "transform 0.2s ease-in-out",
-                ":hover": {
-                  transform: "scale(1.1)",
-                  transition: "transform 0.2s ease-in-out",
-                },
-              }}
-            >
-              <Iconify icon={"material-symbols:account-circle"} />
-            </IconButton>
-
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleLogOff}>Disconnect</MenuItem>
-            </Menu>
-          </div>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -114,14 +59,14 @@ export default function Menux() {
         anchor="left"
       >
         <Toolbar>
-          <Box display="flex" justifyContent="start" p={2}>
+          <Box ml={3} display="flex" justifyContent="center" p={2}>
             <img
               onClick={() => router.push("/routes/home")}
-              src="/logo.png"
+              src="/logo1.png"
               style={{ cursor: "pointer" }}
               alt="Logo"
-              height="50"
-              width="120"
+              height="38"
+              width="65"
             />
           </Box>
         </Toolbar>
@@ -135,9 +80,7 @@ export default function Menux() {
                 <ListItem key={item.key} disablePadding>
                   <ListItemButton
                     onClick={() => {
-                      item.label == "Log-off"
-                        ? handleLogOff()
-                        : router.push(`${item.key}`);
+                      router.push(`${item.key}`);
                     }}
                     sx={{
                       transition: "transform 0.2s ease-in-out",

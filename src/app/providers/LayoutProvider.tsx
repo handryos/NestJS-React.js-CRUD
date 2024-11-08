@@ -12,28 +12,9 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import ThemeDrawer from "../components/ThemeDrawer/ThemeDrawer";
 
 export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
-  let routerx = useRouter();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width:1024px)");
   const isTablet = useMediaQuery("(min-width:500px)");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const localToken = localStorage.getItem("token");
-      if (!localToken && pathname !== "/routes/register") {
-        routerx.push("/routes/login");
-      }
-      if (localToken) {
-        const expirationTime = 60 * 60 * 1000;
-        const timer = setTimeout(() => {
-          localStorage.removeItem("token");
-          routerx.push("/routes/login");
-        }, expirationTime);
-
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [routerx, pathname]);
 
   return (
     <ReduxProvider store={store}>
@@ -61,14 +42,7 @@ export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
               <div
                 style={{
                   marginTop: isMobile ? (isTablet ? "2dvh" : "8dvh") : 0,
-                  marginLeft:
-                    pathname != "/routes/login" && "/routes/register"
-                      ? isMobile
-                        ? undefined
-                        : pathname == "/routes/register"
-                        ? "4dvw"
-                        : "14dvw"
-                      : "",
+                  marginLeft: isMobile ? undefined : "14dvw",
                   flex: 1,
                   overflow: "hidden",
                 }}

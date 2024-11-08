@@ -22,20 +22,24 @@ ChartJS.register(
   Title
 );
 
-const QuantitysChart: React.FC<{
-  sensors: number;
-  machines: number;
-  monitoringPoints: number;
-}> = ({ sensors, machines, monitoringPoints }) => {
-  const labels = ["Machines", "Monitoring Points", "Sensors"];
+interface PopulationData {
+  year: number;
+  value: number;
+}
+
+const PopulationChart: React.FC<{ populationCounts: PopulationData[] }> = ({
+  populationCounts,
+}) => {
   const theme = useTheme();
+  const labels = populationCounts.map((item) => item.year.toString());
+  const dataValues = populationCounts.map((item) => item.value);
 
   const data = {
     labels: labels,
     datasets: [
       {
-        label: "Registereds Number",
-        data: [machines, monitoringPoints, sensors],
+        label: "Population Over Years",
+        data: dataValues,
         backgroundColor: theme.palette.primary.main,
       },
     ],
@@ -49,7 +53,7 @@ const QuantitysChart: React.FC<{
       x: {
         title: {
           display: true,
-          text: "Registereds Number",
+          text: "Year",
         },
         grid: {
           display: false,
@@ -58,11 +62,11 @@ const QuantitysChart: React.FC<{
       y: {
         title: {
           display: true,
-          text: "Registereds Number",
+          text: "Population",
         },
         beginAtZero: true,
         ticks: {
-          stepSize: 10,
+          stepSize: 5000000,
         },
       },
     },
@@ -70,7 +74,7 @@ const QuantitysChart: React.FC<{
       tooltip: {
         callbacks: {
           label: function (tooltipItem: any) {
-            return `Registered quantity: ${tooltipItem.raw}`;
+            return `Population: ${tooltipItem.raw.toLocaleString()}`;
           },
         },
       },
@@ -80,4 +84,4 @@ const QuantitysChart: React.FC<{
   return <Bar data={data} options={options} />;
 };
 
-export default QuantitysChart;
+export default PopulationChart;
