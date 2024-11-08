@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   DataGrid,
   getGridStringOperators,
+  GridCellParams,
   gridClasses,
   GridColDef,
 } from "@mui/x-data-grid";
@@ -10,13 +11,11 @@ import {
   styled,
   useMediaQuery,
   Theme,
+  IconButton,
   useTheme,
-  Typography,
-  Stack,
+  Button,
 } from "@mui/material";
-import { dispatch } from "@/app/redux/store";
-import { getCountrieInfo } from "@/app/redux/slices/CountrieSlice";
-import { useRouter } from "next/navigation";
+import Iconify from "../Iconify/Iconify";
 
 export interface headerOptions {
   xs?: string[];
@@ -30,18 +29,21 @@ export default function DataTable({
   data = [],
   header = [],
   hidedColumns = [],
-  id,
-  name,
-  flag,
-  useInfos = false,
+  newFunction = () => {},
+  editFunction = (data: any) => {},
+  deleteFunction = (data: any) => {},
+  removeCheckBox = false,
+  entity,
 }: {
+  isDetalhesTable?: boolean;
   data: any;
   header: GridColDef[];
-  id: string;
   hidedColumns: headerOptions[];
-  name: string;
-  flag: string;
-  useInfos?: boolean;
+  newFunction: () => any;
+  editFunction: (data: any) => any;
+  deleteFunction?: (data: any) => any;
+  removeCheckBox?: boolean;
+  entity: "Machine" | "Monitoring Points";
 }) {
   const isXs = useMediaQuery((theme: Theme) => theme.breakpoints.down("xs"));
   const isSm = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
@@ -49,7 +51,6 @@ export default function DataTable({
   const isLg = useMediaQuery((theme: Theme) => theme.breakpoints.down("lg"));
 
   const theme = useTheme();
-  const router = useRouter();
 
   const columns: GridColDef[] = React.useMemo(() => {
     let baseColumns: GridColDef[] = header.map((value) => {
@@ -67,6 +68,53 @@ export default function DataTable({
             operator.value === "contains"
         ),
       };
+    });
+    baseColumns.unshift({
+      field: "actions",
+      headerName: "Actions",
+      width: isXs
+        ? 100
+        : isSm
+        ? 200
+        : isMd
+        ? entity == "Monitoring Points"
+          ? 100
+          : 185
+        : isLg
+        ? entity == "Monitoring Points"
+          ? 150
+          : 200
+        : entity == "Monitoring Points"
+        ? 150
+        : 350,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <>
+          <IconButton
+            aria-label="edit"
+            onClick={() => {
+              editFunction(params);
+            }}
+          >
+            <Iconify
+              color={theme.palette.primary.main}
+              icon={"material-symbols:edit"}
+            />
+          </IconButton>
+          <IconButton
+            aria-label="delete"
+            onClick={() => {
+              deleteFunction(params);
+            }}
+          >
+            <Iconify
+              color={theme.palette.error.main}
+              icon={"material-symbols:delete-outline"}
+            />
+          </IconButton>
+        </>
+      ),
     });
 
     const responsiveHidedColumns = () => {
@@ -90,26 +138,32 @@ export default function DataTable({
 
     return baseColumns;
   }, [isXs, isSm, isMd, isLg, header, hidedColumns]);
+
   return (
     <Box
       borderRadius={2}
       key={JSON.stringify(data)}
       sx={{
         mb: 2,
-        width: isXs ? "50%" : "100%",
-        maxWidth: isXs ? "35%" : "95%",
+        width: isXs ? (entity == "Machine" ? "100%" : "50%") : "100%",
+        maxWidth: isXs ? (entity == "Machine" ? "90%" : "35%") : "95%",
         ml: { xs: 10, sm: 0 },
       }}
     >
-      {useInfos && name != "" && (
-        <>
-          <Stack mb={2} spacing={2} direction="row">
-            <Typography variant="h4">{name}</Typography>
-            <img src={flag} width={80} height={40} />
-          </Stack>
-          <Typography variant={"h6"}>Border Countries</Typography>
-        </>
-      )}
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ mb: 2, textTransform: "capitalize " }}
+        onClick={() => newFunction()}
+        startIcon={
+          <Iconify
+            color={theme.palette.primary.lighter}
+            icon={"material-symbols:add-circle"}
+          />
+        }
+      >
+        New {entity}
+      </Button>
 
       <Box
         sx={{
@@ -130,28 +184,18 @@ export default function DataTable({
         }}
       >
         <StyledDataGrid
-          getRowId={(row) => row[id]}
           rows={data && data}
+          disableRowSelectionOnClick
           columns={columns}
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
             },
           }}
-          checkboxSelection
-          disableRowSelectionOnClick
-          disableMultipleRowSelection
           pageSizeOptions={[5]}
+          checkboxSelection={!removeCheckBox}
+          disableMultipleRowSelection
           disableAutosize
-          onCellClick={(row) => {
-            dispatch(
-              getCountrieInfo(
-                useInfos ? row.row.commonName : row.row.name,
-                String(row.id),
-                router
-              )
-            );
-          }}
           disableColumnResize
           sx={{
             overflowY: "hidden",

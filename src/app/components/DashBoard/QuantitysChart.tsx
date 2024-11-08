@@ -22,24 +22,20 @@ ChartJS.register(
   Title
 );
 
-interface PopulationData {
-  year: number;
-  value: number;
-}
-
-const PopulationChart: React.FC<{ populationCounts: PopulationData[] }> = ({
-  populationCounts,
-}) => {
+const QuantitysChart: React.FC<{
+  sensors: number;
+  machines: number;
+  monitoringPoints: number;
+}> = ({ sensors, machines, monitoringPoints }) => {
+  const labels = ["Machines", "Monitoring Points", "Sensors"];
   const theme = useTheme();
-  const labels = populationCounts.map((item) => item.year.toString());
-  const dataValues = populationCounts.map((item) => item.value);
 
   const data = {
     labels: labels,
     datasets: [
       {
-        label: "Population Over Years",
-        data: dataValues,
+        label: "Registereds Number",
+        data: [machines, monitoringPoints, sensors],
         backgroundColor: theme.palette.primary.main,
       },
     ],
@@ -53,7 +49,7 @@ const PopulationChart: React.FC<{ populationCounts: PopulationData[] }> = ({
       x: {
         title: {
           display: true,
-          text: "Year",
+          text: "Registereds Number",
         },
         grid: {
           display: false,
@@ -62,11 +58,11 @@ const PopulationChart: React.FC<{ populationCounts: PopulationData[] }> = ({
       y: {
         title: {
           display: true,
-          text: "Population",
+          text: "Registereds Number",
         },
         beginAtZero: true,
         ticks: {
-          stepSize: 5000000,
+          stepSize: 10,
         },
       },
     },
@@ -74,7 +70,7 @@ const PopulationChart: React.FC<{ populationCounts: PopulationData[] }> = ({
       tooltip: {
         callbacks: {
           label: function (tooltipItem: any) {
-            return `Population: ${tooltipItem.raw.toLocaleString()}`;
+            return `Registered quantity: ${tooltipItem.raw}`;
           },
         },
       },
@@ -84,4 +80,4 @@ const PopulationChart: React.FC<{ populationCounts: PopulationData[] }> = ({
   return <Bar data={data} options={options} />;
 };
 
-export default PopulationChart;
+export default QuantitysChart;

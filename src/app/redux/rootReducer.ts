@@ -1,10 +1,12 @@
 import { combineReducers } from "redux";
 import Theme from "./slices/Theme";
-import CountrieSlice from "./slices/CountrieSlice";
+import MachinesSlice from "./slices/MachinesSlice";
+import MonitoringPointsSlice from "./slices/MonitoringPointsSlice";
 
 const rootReducer = combineReducers({
   theme: Theme,
-  countrieSlice: CountrieSlice,
+  machinesSlice: MachinesSlice,
+  monitorinPointsSlice: MonitoringPointsSlice,
 });
 
 export { rootReducer };

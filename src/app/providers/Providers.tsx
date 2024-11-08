@@ -1,6 +1,8 @@
 "use client";
 import React, { ReactNode, lazy } from "react";
+import { ToastContainer } from "react-toastify";
 import { LayoutProvider } from "./LayoutProvider";
+
 interface Props {
   children: ReactNode;
 }

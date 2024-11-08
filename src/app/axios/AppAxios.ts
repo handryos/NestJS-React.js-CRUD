@@ -1,9 +1,11 @@
 import axios from "axios";
-import { configDotenv } from "dotenv";
 
-configDotenv();
 export default function AppAxios() {
+  const token = localStorage.getItem("token");
   return axios.create({
-    baseURL: process.env.BASE_URL || "http://localhost:8080/",
+    baseURL: `https://dynamox-fullstack-test-production.up.railway.app`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 }
