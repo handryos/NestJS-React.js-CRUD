@@ -8,7 +8,7 @@ This document outlines the deployment setup for the project, detailing the backe
 - **Frontend Deployment:** Hosted on [Netlify]
 
 ### Application Access
-You can access the application login page here: [Crud Application](https://nest-crud.netlify.app/routes/login)
+You can access the application login page here: [Crud Application](https://dynamox-test.netlify.app/routes/login)
 
 # Back-End Overview
 
