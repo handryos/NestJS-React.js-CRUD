@@ -4,7 +4,7 @@
 
 This document outlines the deployment setup for the project, detailing the backend deployment on Railway and the frontend deployment on Netlify.
 
-- **Backend Deployment:** Hosted on [Railway] - (dynamox-fullstack-test-production.up.railway.app)
+- **Backend Deployment:** Hosted on [Railway]
 - **Frontend Deployment:** Hosted on [Netlify]
 
 ### Application Access
